@@ -18,7 +18,7 @@
 					v.site_path = v.sites_path + '/' + 'comm';
 					return v;
 				} 
-				if(host.match(/^(www\.|dev\.|qa\.|)shusiou\.(com|win)$/)) { 
+				if(host.match(/^(www\.|dev\.|qa\.|)(shusiou|platoplan)\.(com|win)$/)) { 
 					v.site_path = v.sites_path + '/' + 'root';
 					return v;
 				}
