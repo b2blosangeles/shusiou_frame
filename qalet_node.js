@@ -15,7 +15,10 @@ var env = {
 	sites_path:__dirname + '/sites',
 	site_contents_path : '/var/site_contents'
 };
-var _dns = {m:{tm:new Date().getTime(), list:[]}, n:{tm:new Date().getTime(), list:[]}};
+var _dns = {m:{tm:new Date().getTime(), list:[]}, 
+	    dns : {tm:new Date().getTime(), DNS:{}},
+	    n:{tm:new Date().getTime(), list:[]}, 
+	    c:{tm:new Date().getTime(), list:[]}};
 var pkg = {
 	crowdProcess:require('./package/crowdProcess/crowdProcess'),
 	request		:require('./package/request/node_modules/request'),
@@ -94,11 +97,11 @@ pkg.fs.exists(cert_folder, function(exists) {
 		var httpsOptions = {
 
 			SNICallback: function(hostname, cb) {
-			  if (certs[hostname]) {
-				var ctx = tls.createSecureContext(certs[hostname]);
-			  } else {
-				var ctx = tls.createSecureContext(certs['_default'])
-			  }
+			  //if (certs[hostname]) {
+			//	var ctx = tls.createSecureContext(certs[hostname]);
+			  //} else {
+				var ctx = tls.createSecureContext(certs['star.shusiou.win'])
+			 // }
 			  cb(null, ctx)
 			}
 		};
@@ -127,13 +130,13 @@ pkg.fs.exists(ddns_path, function(exists) {
 	    dnsport = 53;
 	for (var i = 0; i < ips.length; i++) {
 		try {
-			dnsd.createServer(function(req, res) {
+			dnsd.createServer((function(i) {return function(req, res) {
 				delete require.cache[ddns_path];
 				let DDNS  = require(ddns_path + '/api/inc/ddns/ddns.js'), 
-				    ddns = new DDNS(env, _dns, ips[i]);				
+				    ddns = new DDNS(env, _dns, ips[i]);
 				ddns.sendRecord(req, res);
 
-			}).listen(dnsport, ips[i])
+			}})(i)).listen(dnsport, ips[i])
 			console.log('DNS Server running at ' + ips[i] + ':' + dnsport);
 		} catch (e) {
 			console.log('Error ' + e.message);

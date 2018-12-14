@@ -61,12 +61,10 @@
 						if (count_q == count_r) {
 							clearInterval(_itv);
 							cbk({_spent_time:new Date().getTime() - tm, status:'success', results:me.data});
-							console.log(new Date());
 						}
 						if (new Date().getTime() - tm > vtime) {
 							clearInterval(_itv);
 							cbk({_spent_time:new Date().getTime() - tm, status:'timeout', results:me.data});
-							console.log(new Date());
 						}				
 						return true;
 					}

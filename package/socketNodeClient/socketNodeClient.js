@@ -30,7 +30,7 @@
 			});
 			setTimeout(function() {   
 				me.socket.close();
-			},1000);			
+			},(cfg.timeout) ? cfg.timeout : 1000);			
 			me.socket.on('serverData', function(data) {
 				if ((data._room) && data._requestID === me.requestID) {
 					me.socket.close();
@@ -39,6 +39,29 @@
 				}
 			});		
 		};
+		me.sendToSocket = function (socket_id, data, callback) {
+			let me = this;
+			if (!me.socket || !me.socket.connected) {
+				me.connect();
+			}
+			me.requestID = socket_id + '_' + new Date().getTime();
+
+			me.socket.on('connect', function(){
+				me.socket.emit('clientData', {_socket: socket_id, 
+						_link: cfg.link, _proxy: ((cfg.proxy) ? cfg.proxy : null),
+						_requestID:me.requestID, data: data});
+			});
+			setTimeout(function() {   
+				me.socket.close();
+			},(cfg.timeout) ? cfg.timeout : 1000);			
+			me.socket.on('serverData', function(data) {
+				if ((data._socket) && data._requestID === me.requestID) {
+					me.socket.close();
+					callback(data);
+					return true;
+				}
+			});		
+		};		
 		me.sendToRoomArray = function (arr, data, callback) {
 		
 		};		
