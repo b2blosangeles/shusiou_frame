@@ -23,6 +23,8 @@
 			me.requestID = room + '_' + new Date().getTime();
 
 			me.socket.on('connect', function(){
+				me.socket.emit('clientRequest', { cmd : 'sendToRoom', room : room, data:data});
+				return true;
 				me.socket.emit('createRoom', room);
 				me.socket.emit('clientData', {_room: room, 
 						_link: cfg.link, _proxy: ((cfg.proxy) ? cfg.proxy : null),
