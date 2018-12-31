@@ -24,22 +24,13 @@
 
 			me.socket.on('connect', function(){
 				me.socket.emit('clientRequest', { cmd : 'sendToRoom', room : room, data:data});
-				return true;
-				me.socket.emit('createRoom', room);
-				me.socket.emit('clientData', {_room: room, 
-						_link: cfg.link, _proxy: ((cfg.proxy) ? cfg.proxy : null),
-						_requestID:me.requestID, data: data});
+				if (typeof callback === 'function') {
+					callback(data)
+				}
 			});
 			setTimeout(function() {   
 				me.socket.close();
-			},(cfg.timeout) ? cfg.timeout : 1000);			
-			me.socket.on('serverData', function(data) {
-				if ((data._room) && data._requestID === me.requestID) {
-					me.socket.close();
-					callback(data);
-					return true;
-				}
-			});		
+			},(cfg.timeout) ? cfg.timeout : 1000);		
 		};
 		me.sendToSocket = function (socket_id, data, callback) {
 			let me = this;
