@@ -25,12 +25,15 @@
 			me.socket.on('connect', function(){
 				me.socket.emit('clientRequest', { cmd : 'sendToRoom', room : room, data:data});
 				if (typeof callback === 'function') {
-					callback(data)
+					me.socket.close();
+					callback(data);
+					return true;
 				}
 			});
 			setTimeout(function() {   
 				me.socket.close();
-			},(cfg.timeout) ? cfg.timeout : 1000);		
+				callback()
+			},(cfg.timeout) ? cfg.timeout :3000);		
 		};
 		me.sendToSocket = function (socket_id, data, callback) {
 			let me = this;
