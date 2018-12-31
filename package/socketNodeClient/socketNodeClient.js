@@ -40,20 +40,17 @@
 			let me = this;
 			if (!me.socket || !me.socket.connected) {
 				me.connect();
+				setTimeout(function() {   
+					if (me.socket) me.socket.close();
+					callback()
+				},(cfg.timeout) ? cfg.timeout :3000);				
 			}
 			me.requestID = socket_id + '_' + new Date().getTime();
 
 			me.socket.on('connect', function(){
-				me.socket.emit('clientData', {_socket: socket_id, 
-						_link: cfg.link, _proxy: ((cfg.proxy) ? cfg.proxy : null),
-						_requestID:me.requestID, data: data});
-			});
-			setTimeout(function() {   
+				me.socket.emit('clientRequest', { cmd : 'sendToSocket', toSocket : socket_id, data:data});
 				me.socket.close();
-			},(cfg.timeout) ? cfg.timeout : 1000);			
-			me.socket.on('serverData', function(data) {
-				if ((data._socket) && data._requestID === me.requestID) {
-					me.socket.close();
+				if (typeof callback === 'function') {
 					callback(data);
 					return true;
 				}
