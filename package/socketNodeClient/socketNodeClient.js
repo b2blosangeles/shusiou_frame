@@ -19,21 +19,22 @@
 			let me = this;
 			if (!me.socket || !me.socket.connected) {
 				me.connect();
+				setTimeout(function() {   
+					if (me.socket) me.socket.close();
+					callback()
+				},(cfg.timeout) ? cfg.timeout :3000);					
 			}
 			me.requestID = room + '_' + new Date().getTime();
 
 			me.socket.on('connect', function(){
 				me.socket.emit('clientRequest', { cmd : 'sendToRoom', room : room, data:data});
+				me.socket.close();
 				if (typeof callback === 'function') {
-					me.socket.close();
 					callback(data);
 					return true;
 				}
 			});
-			setTimeout(function() {   
-				me.socket.close();
-				callback()
-			},(cfg.timeout) ? cfg.timeout :3000);		
+	
 		};
 		me.sendToSocket = function (socket_id, data, callback) {
 			let me = this;
